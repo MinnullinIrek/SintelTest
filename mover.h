@@ -26,7 +26,7 @@ class Mover
 private:
 	std::list<std::pair<Coord, int>> getPossibleMoves(int startCol, int startRow, int iteration);
     Coord getPair(int c, int r, int count);
-    bool checkCoord(Coord && cd);
+    bool checkCoord(const Coord & cd);
 
 	std::list<Coord> getBackWay(Coord && cd);
 	void moveByWay(std::list<Coord> coords);

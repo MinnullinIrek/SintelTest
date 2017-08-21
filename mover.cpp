@@ -113,13 +113,15 @@ Coord Mover::getPair(int c, int r, int count)
     return Coord{c + i1 * (dx), r + i2 * (d - dx)};
 }
 
-bool Mover::checkCoord(Coord&& cd)
+bool Mover::checkCoord(const Coord& cd)
 {
     return  cd.col > 0 &&
             cd.row > 0 &&
             cd.col < board->size &&
             cd.row < board->size &&
-            mp[cd] == 0;
+            mp[cd] == 0 &&
+			board->getCell(cd.col, cd.row)->getStepCount() >= 0		
+		;
 }
 
 std::list<Coord> Mover::getBackWay(Coord &&cd)

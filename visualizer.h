@@ -2,6 +2,7 @@
 #define VISUALIZER_H
 #include <memory>
 #include <windows.h>
+#include <array>
 
 #include "visualchar.h"
 
@@ -17,12 +18,17 @@ using namespace std;
 //WriteConsoleOutputCharacter(h, str.c_str() + current, min(len - current, delta), COORD{ r.col1, irow }, logD);
 class Visualizer
 {
-    HANDLE handle;
+	std::array<HANDLE, 2> handles;
+	std::array<HANDLE, 2> ::iterator handle;
 
     void printCell(std::shared_ptr<Cell> cell, int col, int row);
     void SetColor(Color text, Color background);
     void clearRect(const Region &r, wchar_t empty);
 	std::shared_ptr<Board> board;
+
+	void Visualizer::changeBuffer();
+	void Visualizer::setActiveBuffer(HANDLE h);
+
 public:
     Visualizer(std::shared_ptr<Board> board);
     void printBoard(std::shared_ptr<Board> board);

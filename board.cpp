@@ -1,5 +1,9 @@
+#include <random>
+
+
 #include "board.h"
 #include "cell.h"
+
 
 Board::Board(int size):size(size),
     map(size*size,
@@ -16,6 +20,11 @@ Board::Board(int size):size(size),
 std::shared_ptr<Cell> Board::getCell(int col, int row)
 {
     return map.at({col, row});
+}
+
+std::list<Coord> Board::getTeleports()
+{
+	return teleports;
 }
 
 void Board::initMap(std::string strMap)
@@ -38,6 +47,44 @@ void Board::initMap(std::string strMap)
 
 void Board::randomMap()
 {
+	std::random_device rd;
+	std::default_random_engine dre(rd());
+
+	auto rand = std::uniform_int_distribution<int>(-40, 20);
+
+	for (auto cell :  map) {
+		auto i = rand(dre);
+		
+		if (i < 10)
+		{
+			cell.second->setChar('.');
+			cell.second->setStepCount(1);
+		}
+		else if(i < 15)
+		{
+			cell.second->setChar('W');
+			cell.second->setStepCount(2);
+		}
+		else if (i < 17)
+		{
+			cell.second->setChar('L');
+			cell.second->setStepCount(3);
+		}
+		else if (i <= 19)
+		{
+			cell.second->setChar('R');
+			cell.second->setStepCount(-1);
+		}
+		else if(i == 20)
+		{
+			cell.second->setChar('T');
+			cell.second->setStepCount(1);
+			cell.second->setIsTeleport(true);
+		}
+
+	}
+
+
 
 }
 

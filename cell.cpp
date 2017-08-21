@@ -36,3 +36,13 @@ void Cell::setStepCount(int stepCnt)
 {
 	stepCount = stepCnt;
 }
+
+bool Cell::getIsTeleport()
+{
+	return isTeleport;
+}
+
+void Cell::setIsTeleport(bool teleport)
+{
+	isTeleport = teleport;
+}
