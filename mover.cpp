@@ -25,25 +25,30 @@ int Mover::moveTo(int col, int row)
 	int iteration = 0;
 	mp[{startCol, startRow}] = iteration;
 
-	std::list<Coord> positions = { { startCol, startRow } };
-	std::list<Coord> nextPositions;
+	std::list< std::pair<Coord, int>> positions = { std::make_pair<Coord, int>({ startCol, startRow}, 1)};
+	std::list<std::pair<Coord, int>> nextPositions;
 
 	while (true)
 	{
 		iteration++;
 		for (auto pos : positions) {
-			auto lst = getPossibleMoves(pos.col, pos.row);
+			if(pos.second == iteration)
+			{
+				auto lst = getPossibleMoves(pos.first.col, pos.first.row, iteration);
 
 
-			for (auto cd : lst) {
-				mp[cd] = iteration;
-				if (cd.col == col && cd.row == row) {
-					moveByWay(getBackWay(std::move(cd)));
-					goto brek;
+				for (auto cd : lst) {
+					mp[cd.first] = iteration;
+					if (cd.first.col == col && cd.first.row == row) {
+						moveByWay(getBackWay(std::move(cd.first)));
+						goto brek;
+					}
 				}
+				nextPositions.insert(nextPositions.end(), lst.begin(), lst.end());
 			}
-
-			nextPositions.insert(nextPositions.end(),   lst.begin(), lst.end());
+			else {
+				nextPositions.push_back(pos);
+			}
 		}
 		positions = nextPositions;
 		nextPositions.clear();
@@ -156,15 +161,16 @@ void Mover::moveLikeKnight(Coord &&cd)
 	this->startRow = cd.row;
 }
 
-std::list<Coord> Mover::getPossibleMoves(int startCol, int startRow)
+std::list<std::pair<Coord, int>> Mover::getPossibleMoves(int startCol, int startRow, int iteration)
 {
-    std::list<Coord> coords;
+    std::list<std::pair<Coord, int>> coords;
 
     for (int i = 1; i <= 8; i++) {
-        Coord cd = getPair(startCol, startRow, i);
+        auto cd = getPair(startCol, startRow, i);
 
-        if(checkCoord(std::move(cd)))
-            coords.push_back(cd);
+		if (checkCoord(std::move(cd))) {
+			coords.push_back(std::make_pair<Coord, int>(std::move(cd), std::move(iteration + board->getCell(cd.col, cd.row)->getStepCount())));
+		}
     }
 
     return coords;

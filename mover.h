@@ -24,7 +24,7 @@ class Mover
     std::unordered_map<Coord, int, std::function<int(Coord)>, std::function<int(Coord cd1, Coord cd2)>> mp;
 
 private:
-    std::list<Coord> getPossibleMoves(int startCol, int startRow);
+	std::list<std::pair<Coord, int>> getPossibleMoves(int startCol, int startRow, int iteration);
     Coord getPair(int c, int r, int count);
     bool checkCoord(Coord && cd);
 
