@@ -1,3 +1,5 @@
+#include <list>
+
 #include "mover.h"
 
 #include "board.h"
@@ -5,8 +7,8 @@
 #include "cell.h"
 
 Mover:: Mover(std::shared_ptr<Board> board, std::shared_ptr<Knight> knight, int col,int row):
-    col(col),
-    row(row),
+    startCol(col),
+    startRow(row),
     board(board),
     knight(knight),
     curCell(board->getCell(col, row)),
@@ -14,13 +16,41 @@ Mover:: Mover(std::shared_ptr<Board> board, std::shared_ptr<Knight> knight, int 
        [this](Coord &&cd){return this->board->size*cd.col + cd.row;},
        [](const Coord& lhs, const Coord& rhs) { return lhs.row == rhs.row && lhs.col == rhs.col; })
 {
-
+	curCell->setKnight(knight);
+	curCell->setChar('S');
 }
 
 int Mover::moveTo(int col, int row)
 {
+	int iteration = 0;
+	mp[{startCol, startRow}] = iteration;
+
+	std::list<Coord> positions = { { startCol, startRow } };
+	std::list<Coord> nextPositions;
+
+	while (true)
+	{
+		iteration++;
+		for (auto pos : positions) {
+			auto lst = getPossibleMoves(pos.col, pos.row);
 
 
+			for (auto cd : lst) {
+				mp[cd] = iteration;
+				if (cd.col == col && cd.row == row) {
+					moveByWay(getBackWay(std::move(cd)));
+					goto brek;
+				}
+			}
+
+			nextPositions.insert(nextPositions.end(),   lst.begin(), lst.end());
+		}
+		positions = nextPositions;
+		nextPositions.clear();
+	}
+	brek:
+
+	return iteration;
 }
 
 Coord Mover::getPair(int c, int r, int count)
@@ -85,6 +115,45 @@ bool Mover::checkCoord(Coord&& cd)
             cd.col < board->size &&
             cd.row < board->size &&
             mp[cd] == 0;
+}
+
+std::list<Coord> Mover::getBackWay(Coord &&cd)
+{
+	int itertion = mp[cd];
+	std::list<Coord> backWay;
+	while(itertion > 0) {
+		itertion--;
+		for (auto i = 1; i <= 8; i++) {
+			auto coord = getPair(cd.col, cd.row, i);
+			if (mp[coord] == itertion) {
+				backWay.push_front(coord);
+				cd = coord;
+				break;
+			}
+		}
+	}
+
+	return backWay;
+}
+
+void Mover::moveByWay(std::list<Coord> coords)
+{
+	for (auto cd : coords) {
+		moveLikeKnight(std::move(cd));
+		
+	}
+}
+
+void Mover::moveLikeKnight(Coord &&cd)
+{
+
+	curCell->resetKnight();
+	curCell.swap(board->getCell(cd.col, cd.row));
+	curCell->setKnight(knight);
+	knight->informChanges();
+
+	this->startCol = cd.col;
+	this->startRow = cd.row;
 }
 
 std::list<Coord> Mover::getPossibleMoves(int startCol, int startRow)

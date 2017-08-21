@@ -6,14 +6,29 @@
 
 using namespace std;
 
-Knight::Knight(std::shared_ptr<Board> board, std::shared_ptr<Knight> knight,int col,int row):mover(std::make_unique<Mover>(board, std::shared_ptr<Knight>(this), col, row))
+void Knight::informChanges()
+{	
+	for (auto watcher: watchers) {
+		watcher();
+	}
+}
+
+Knight::Knight()
 {
-
-
 }
 
 int Knight::moveTo(int col, int row)
 {
-    mover->moveTo(col, row);
+    return mover->moveTo(col, row);
 
+}
+
+void Knight::setMover(std::unique_ptr<Mover> newMover)
+{
+	mover.swap(newMover);
+}
+
+void Knight::addWatcher(std::function<void()> watcher)
+{
+	watchers.push_back(watcher);
 }

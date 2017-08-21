@@ -10,7 +10,7 @@ class Board;
 
 struct Region
 {
-    short col1, row1, col2, row2;
+    int col1, row1, col2, row2;
 };
 using namespace std;
 
@@ -22,9 +22,12 @@ class Visualizer
     void printCell(std::shared_ptr<Cell> cell, int col, int row);
     void SetColor(Color text, Color background);
     void clearRect(const Region &r, wchar_t empty);
+	std::shared_ptr<Board> board;
 public:
-    Visualizer();
+    Visualizer(std::shared_ptr<Board> board);
     void printBoard(std::shared_ptr<Board> board);
+	void operator()();
+	
 
 };
 

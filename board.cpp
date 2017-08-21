@@ -6,7 +6,11 @@ Board::Board(int size):size(size),
         [size](Coord &&cd){return size*cd.col + cd.row;},
         [](const Coord& lhs, const Coord& rhs) { return lhs.row == rhs.row && lhs.col == rhs.col; })
 {
-
+	for (int i = 0; i < size; i++)
+		for (int j = 0; j < size; j++)
+		{
+			map[{i, j}] = std::make_shared<Cell>();
+		}
 }
 
 std::shared_ptr<Cell> Board::getCell(int col, int row)
