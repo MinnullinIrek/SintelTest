@@ -113,15 +113,19 @@ Coord Mover::getPair(int c, int r, int count)
     return Coord{c + i1 * (dx), r + i2 * (d - dx)};
 }
 
-bool Mover::checkCoord(const Coord& cd)
+bool Mover::checkCoord(const Coord& cd1, const Coord& cd)
 {
-    return  cd.col > 0 &&
+	auto cells = get—ellsBetweenCoords(cd1, cd);
+	for (auto cell : cells)
+		if (cell->getStepCount() == -2)
+			return false;
+    
+	return  cd.col > 0 &&
             cd.row > 0 &&
             cd.col < board->size &&
             cd.row < board->size &&
             mp[cd] == 0 &&
-			board->getCell(cd.col, cd.row)->getStepCount() >= 0		
-		;
+			board->getCell(cd.col, cd.row)->getStepCount() >= 0;
 }
 
 std::list<Coord> Mover::getBackWay(Coord &&cd)
@@ -163,6 +167,23 @@ void Mover::moveLikeKnight(Coord &&cd)
 	this->startRow = cd.row;
 }
 
+std::list<std::shared_ptr<Cell>> Mover::get—ellsBetweenCoords(const Coord & cd1, const Coord & cd2)
+{
+	std::list<std::shared_ptr<Cell>> cells;
+
+	if (abs(cd1.col - cd2.col) >  abs(cd1.row - cd2.row)) {
+		cells.push_back(board->getCell((cd1.col + cd2.col)/2, cd1.row));
+		cells.push_back(board->getCell(cd2.col , cd1.row));
+	}
+	else {
+		cells.push_back(board->getCell(cd1.col, (cd1.row + cd2.row) / 2));
+		cells.push_back(board->getCell(cd1.col, cd2.row));
+	}
+	cells.push_back(board->getCell(cd2.col, cd2.row));
+
+	return cells;
+}
+
 std::list<std::pair<Coord, int>> Mover::getPossibleMoves(int startCol, int startRow, int iteration)
 {
     std::list<std::pair<Coord, int>> coords;
@@ -170,8 +191,15 @@ std::list<std::pair<Coord, int>> Mover::getPossibleMoves(int startCol, int start
     for (int i = 1; i <= 8; i++) {
         auto cd = getPair(startCol, startRow, i);
 
-		if (checkCoord(std::move(cd))) {
+		if (checkCoord({startCol, startRow}, cd)) {
 			coords.push_back(std::make_pair<Coord, int>(std::move(cd), std::move(iteration + board->getCell(cd.col, cd.row)->getStepCount())));
+		}
+
+		if (board->getCell(cd.col, cd.row)->getIsTeleport()) {
+			auto teleports = board->getTeleports();
+			for (auto teleportCoord : teleports) {
+				coords.push_back(std::make_pair(std::move(teleportCoord), std::move(iteration + board->getCell(cd.col, cd.row)->getStepCount())));
+			}
 		}
     }
 

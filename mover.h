@@ -26,11 +26,12 @@ class Mover
 private:
 	std::list<std::pair<Coord, int>> getPossibleMoves(int startCol, int startRow, int iteration);
     Coord getPair(int c, int r, int count);
-    bool checkCoord(const Coord & cd);
+    bool checkCoord(const Coord& cd1, const Coord& cd);
 
 	std::list<Coord> getBackWay(Coord && cd);
 	void moveByWay(std::list<Coord> coords);
 	void moveLikeKnight(Coord &&cd);
+	std::list<std::shared_ptr<Cell>> get—ellsBetweenCoords(const Coord & cd1, const Coord & cd2);
 
 public:
     Mover(std::shared_ptr<Board> board, std::shared_ptr<Knight> knight,int col,int row);

@@ -68,12 +68,17 @@ void Board::randomMap()
 		else if (i < 17)
 		{
 			cell.second->setChar('L');
-			cell.second->setStepCount(3);
+			cell.second->setStepCount(5);
 		}
-		else if (i <= 19)
+		else if (i < 19)
 		{
 			cell.second->setChar('R');
 			cell.second->setStepCount(-1);
+		}
+		else if (i == 19)
+		{
+			cell.second->setChar('B');
+			cell.second->setStepCount(-2);
 		}
 		else if(i == 20)
 		{
