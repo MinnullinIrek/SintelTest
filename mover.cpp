@@ -135,16 +135,45 @@ std::list<Coord> Mover::getBackWay(Coord &&cd)
 {
 	int itertion = mp[cd];
 	std::list<Coord> backWay;
-	while(itertion > 0) {
-		itertion--;
+	auto findPrevCoord = [&backWay, this, &cd](int iteration, Coord &cord) {
 		bool didFind = false;
 		for (auto i = 1; i <= 8; i++) {
-			auto coord = getPair(cd.col, cd.row, i);
-			if ( coord.col >= 0 && coord.row >= 0 && mp[coord] == itertion) {
+			auto coord = getPair(cord.col, cord.row, i);
+			if (coord.col >= 0 && coord.row >= 0 && mp[coord] == iteration) {
 				backWay.push_front(coord);
 				cd = coord;
+				didFind = true;
 				break;
 			}
+		}
+
+		return didFind;
+	};
+	
+	while(itertion > 0) {
+		itertion--;
+		bool didFind = findPrevCoord(itertion, cd);
+
+		if (!didFind)
+		{
+			auto lastCellCoord = backWay.front();
+
+			auto lastCell = board->getCell(lastCellCoord.col, lastCellCoord.row);
+
+			if (lastCell->getIsTeleport())
+			{
+				auto teleportsCoordsList = board->getTeleports();
+
+				for (auto teleport : teleportsCoordsList) {
+					if (findPrevCoord(itertion, teleport))
+						break;
+				}
+			}
+			else
+			{
+				throw std::runtime_error("cant find backWay");
+			}
+
 		}
 	}
 
