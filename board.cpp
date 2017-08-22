@@ -1,5 +1,5 @@
 #include <random>
-
+#include <exception>
 
 #include "board.h"
 #include "cell.h"
@@ -38,7 +38,36 @@ void Board::initMap(std::string strMap)
             row++;
         }
         else {
-           map[Coord{col, row}] = std::make_shared<Cell>(ch);
+		   auto cell = map[Coord{ col, row }];
+		   cell->setChar(ch);
+
+		   switch (ch)
+		   {
+		   case '.':
+			   cell->setStepCount(1);
+			   break;
+		   case 'W':
+			   cell->setStepCount(2);
+			   break;
+		   case 'L':
+			   cell->setStepCount(5);
+			   break;
+		   case 'R':
+			   cell->setStepCount(-1);
+			   break;
+		   case 'B':
+			   cell->setStepCount(-2);
+			   break;
+		   case 'T':
+			   cell->setStepCount(1);
+			   cell->setIsTeleport(true);
+			   teleports.push_back({ col, row });
+			   break;
+		   default:
+			   throw std::runtime_error((std::string("unexcepted char ") + ch).c_str());
+		   }
+
+           //map[Coord{col, row}] = std::make_shared<Cell>(ch);
            col ++;
         }
 
@@ -51,10 +80,11 @@ void Board::randomMap()
 	std::default_random_engine dre(rd());
 
 	auto rand = std::uniform_int_distribution<int>(-40, 20);
-
+	int count = 0;
 	for (auto cell :  map) {
 		auto i = rand(dre);
-		
+		count++;
+
 		if (i < 10)
 		{
 			cell.second->setChar('.');
@@ -85,6 +115,7 @@ void Board::randomMap()
 			cell.second->setChar('T');
 			cell.second->setStepCount(1);
 			cell.second->setIsTeleport(true);
+			teleports.push_back({ size - (int)(count / size) - 1, count / size });
 		}
 
 	}

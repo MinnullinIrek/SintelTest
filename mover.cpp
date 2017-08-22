@@ -36,7 +36,6 @@ int Mover::moveTo(int col, int row)
 			{
 				auto lst = getPossibleMoves(pos.first.col, pos.first.row, iteration);
 
-
 				for (auto cd : lst) {
 					mp[cd.first] = iteration;
 					if (cd.first.col == col && cd.first.row == row) {
@@ -115,17 +114,21 @@ Coord Mover::getPair(int c, int r, int count)
 
 bool Mover::checkCoord(const Coord& cd1, const Coord& cd)
 {
-	auto cells = getÑellsBetweenCoords(cd1, cd);
-	for (auto cell : cells)
-		if (cell->getStepCount() == -2)
-			return false;
-    
-	return  cd.col > 0 &&
-            cd.row > 0 &&
-            cd.col < board->size &&
-            cd.row < board->size &&
-            mp[cd] == 0 &&
-			board->getCell(cd.col, cd.row)->getStepCount() >= 0;
+	if (cd.col > 0 &&
+		cd.row > 0 &&
+		cd.col < board->size &&
+		cd.row < board->size &&
+		mp[cd] == 0 &&
+		board->getCell(cd.col, cd.row)->getStepCount() >= 0)
+	{
+		auto cells = getÑellsBetweenCoords(cd1, cd);
+		for (auto cell : cells)
+			if (cell->getStepCount() == -2)
+				return false;
+		return true;
+	}
+	
+	return false;
 }
 
 std::list<Coord> Mover::getBackWay(Coord &&cd)
@@ -134,9 +137,10 @@ std::list<Coord> Mover::getBackWay(Coord &&cd)
 	std::list<Coord> backWay;
 	while(itertion > 0) {
 		itertion--;
+		bool didFind = false;
 		for (auto i = 1; i <= 8; i++) {
 			auto coord = getPair(cd.col, cd.row, i);
-			if (mp[coord] == itertion) {
+			if ( coord.col >= 0 && coord.row >= 0 && mp[coord] == itertion) {
 				backWay.push_front(coord);
 				cd = coord;
 				break;
@@ -193,14 +197,15 @@ std::list<std::pair<Coord, int>> Mover::getPossibleMoves(int startCol, int start
 
 		if (checkCoord({startCol, startRow}, cd)) {
 			coords.push_back(std::make_pair<Coord, int>(std::move(cd), std::move(iteration + board->getCell(cd.col, cd.row)->getStepCount())));
-		}
-
-		if (board->getCell(cd.col, cd.row)->getIsTeleport()) {
-			auto teleports = board->getTeleports();
-			for (auto teleportCoord : teleports) {
-				coords.push_back(std::make_pair(std::move(teleportCoord), std::move(iteration + board->getCell(cd.col, cd.row)->getStepCount())));
+			if (board->getCell(cd.col, cd.row)->getIsTeleport()) {
+				auto teleports = board->getTeleports();
+				for (auto teleportCoord : teleports) {
+					coords.push_back(std::make_pair(std::move(teleportCoord), std::move(iteration + board->getCell(cd.col, cd.row)->getStepCount())));
+				}
 			}
 		}
+
+
     }
 
     return coords;
