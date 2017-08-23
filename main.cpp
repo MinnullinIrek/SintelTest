@@ -57,7 +57,7 @@ int main()
 		knight->addWatcher([visualizer]() {visualizer->operator()(); });
 		visualizer->printBoard(board);
 
-		knight->moveTo(30, 30);
+		knight->moveTo(15, 3);
 
 	}
 	catch (exception &ex)

@@ -199,10 +199,10 @@ bool Mover::checkMoves(const std::list<Coord>& coords)
 
 			if (!((deltaRow == 2 && deltaCol == 1) || (deltaRow == 1 && deltaCol == 2))) {
 
-				auto cellLast = board->getCell(cdLast.col, cdLast.row);
+				//auto cellLast = board->getCell(cdLast.col, cdLast.row);
 				auto cell = board->getCell(cd.col, cd.row);
 				
-				if (!(cellLast->getIsTeleport() && cell->getIsTeleport())) {
+				if (! cell->getIsTeleport()) {
 					return false;
 				}
 			}
@@ -254,7 +254,7 @@ std::list<std::pair<Coord, int>> Mover::getPossibleMoves(int startCol, int start
 			if (board->getCell(cd.col, cd.row)->getIsTeleport()) {
 				auto teleports = board->getTeleports();
 				for (auto teleportCoord : teleports) {
-					coords.push_back(std::make_pair(std::move(teleportCoord), std::move(iteration + 1 + board->getCell(cd.col, cd.row)->getStepCount())));
+					coords.push_back(std::make_pair(std::move(teleportCoord), std::move(iteration + board->getCell(cd.col, cd.row)->getStepCount())));
 				}
 			}
 		}
