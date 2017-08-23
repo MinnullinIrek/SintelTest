@@ -29,7 +29,10 @@ private:
     bool checkCoord(const Coord& cd1, const Coord& cd);
 
 	std::list<Coord> getBackWay(Coord && cd);
-	void moveByWay(std::list<Coord> coords);
+	bool moveByWay(std::list<Coord> coords);
+
+	bool checkMoves(const std::list<Coord>& coords);
+
 	void moveLikeKnight(Coord &&cd);
 	std::list<std::shared_ptr<Cell>> get—ellsBetweenCoords(const Coord & cd1, const Coord & cd2);
 
