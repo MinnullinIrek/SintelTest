@@ -22,6 +22,8 @@ public:
 
     int moveTo(int col, int row);
 
+	int findLongestWay(int col, int row);
+
 	void setMover(std::unique_ptr<Mover> newMover);
 
 	void addWatcher(std::function<void()> watcher);

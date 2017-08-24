@@ -57,13 +57,30 @@ int Mover::moveTo(int col, int row)
 
 int Mover::findLongestWay(int col, int row)
 {
-	std::list<std::list<std::pair<Coord, int>>> ways = { {{{startCol, startRow},0} }};
+	std::list< std::pair<std::list<std::pair<Coord, int>>, int> > ways = { { {{{startCol, startRow},0}}, 0 } };
 
-	int iteration = 0;
-
+	
+	int deleteFirst = 0;
+	int i = 0;
+	
 	for (auto &way : ways) {
-		iteration++;
-		for (auto coord : way) {
+		
+		if (i >= ways.size())
+		{
+			break;
+		}
+		int iteration = way.second;
+
+		for (; deleteFirst > 0; deleteFirst --)
+		{
+			ways.pop_front();
+			
+		}
+
+		
+
+		auto &coord = way.first.back();
+		{
 			if (coord.second == iteration) {
 				auto lst = getPossibleMoves(coord.first.col, coord.first.row, iteration, [this, &way](const Coord &cd1, const Coord &cd)
 				{
@@ -78,7 +95,7 @@ int Mover::findLongestWay(int col, int row)
 							if (cell->getStepCount() == -2)
 								return false;
 
-						for (auto coord : way) {
+						for (auto coord : way.first) {
 							if (cd.col == coord.first.col && cd.row == coord.first.row) {
 								return false;
 							}
@@ -90,36 +107,49 @@ int Mover::findLongestWay(int col, int row)
 				}
 				);
 
-				if (!lst.empty())
-				{
-					ways.remove(way);
-					for (auto cd : lst)
-					{
+				if (!lst.empty()) {
+					i=0;
+					//ways.remove(way);
+					deleteFirst ++;
+					
+					for (auto cd : lst) {
 						auto newWay = way;
-						newWay.push_back(cd);
+						newWay.first.push_back(cd);
+						newWay.second++;
 						ways.push_back(newWay);
 					}
+
+					//ways.pop_front();
+				}
+				else
+				{
+					i++;
+					auto newWay = way;
+					newWay.second++;
+					deleteFirst++;
+					ways.push_back(way);
 				}
 			}
-
-
-
 		}
-
-
-
+		
 	}
-	auto *longestWay = &ways.front();
+	
+	auto longestWay = ways.begin();
 
-	for (auto way : ways) {
+	for (decltype(ways)::iterator way = ways.begin(); way != ways.end(); ++way) {
 
-		if (way.size() > longestWay->size()) {
-			longestWay = &way;
+		//int stepCount = 0;
+
+
+		if (way->first.size() > longestWay->first.size()) {
+			longestWay = way;
 		}
+
+
 	}
 
 	std::list<Coord> lWay;
-	for (auto way : *longestWay) {
+	for (auto way : longestWay->first) {
 		lWay.push_back(way.first);
 	}
 
