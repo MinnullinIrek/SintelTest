@@ -32,7 +32,7 @@ int Mover::moveTo(int col, int row)
 		iteration++;
 		for (auto pos : positions) {
 			if(pos.second == iteration) {
-				auto lst = getPossibleMoves(pos.first.col, pos.first.row, iteration);
+				auto lst = getPossibleMoves(pos.first.col, pos.first.row, iteration, [this](const Coord& cd1, const Coord& cd) {return checkCoord(cd1, cd); });
 
 				for (auto cd : lst) {
 					mp[cd.first] = iteration;
@@ -53,6 +53,80 @@ int Mover::moveTo(int col, int row)
 
 	brek:
 	return iteration;
+}
+
+int Mover::findLongestWay(int col, int row)
+{
+	std::list<std::list<std::pair<Coord, int>>> ways = { {{{startCol, startRow},0} }};
+
+	int iteration = 0;
+
+	for (auto &way : ways) {
+		iteration++;
+		for (auto coord : way) {
+			if (coord.second == iteration) {
+				auto lst = getPossibleMoves(coord.first.col, coord.first.row, iteration, [this, &way](const Coord &cd1, const Coord &cd)
+				{
+					if (cd.col > 0 &&
+						cd.row > 0 &&
+						cd.col < board->size &&
+						cd.row < board->size &&
+						board->getCell(cd.col, cd.row)->getStepCount() >= 0)
+					{
+						auto cells = get—ellsBetweenCoords(cd1, cd);
+						for (auto cell : cells)
+							if (cell->getStepCount() == -2)
+								return false;
+
+						for (auto coord : way) {
+							if (cd.col == coord.first.col && cd.row == coord.first.row) {
+								return false;
+							}
+						}
+
+						return true;
+					}
+					return false;
+				}
+				);
+
+				if (!lst.empty())
+				{
+					ways.remove(way);
+					for (auto cd : lst)
+					{
+						auto newWay = way;
+						newWay.push_back(cd);
+						ways.push_back(newWay);
+					}
+				}
+			}
+
+
+
+		}
+
+
+
+	}
+	auto *longestWay = &ways.front();
+
+	for (auto way : ways) {
+
+		if (way.size() > longestWay->size()) {
+			longestWay = &way;
+		}
+	}
+
+	std::list<Coord> lWay;
+	for (auto way : *longestWay) {
+		lWay.push_back(way.first);
+	}
+
+	moveByWay(lWay);
+
+
+	return 0;
 }
 
 Coord Mover::getPair(int c, int r, int count)
@@ -242,14 +316,14 @@ std::list<std::shared_ptr<Cell>> Mover::get—ellsBetweenCoords(const Coord & cd1,
 	return cells;
 }
 
-std::list<std::pair<Coord, int>> Mover::getPossibleMoves(int startCol, int startRow, int iteration)
+std::list<std::pair<Coord, int>> Mover::getPossibleMoves(int startCol, int startRow, int iteration, std::function<bool(const Coord&, const Coord&)> coordChecker)
 {
     std::list<std::pair<Coord, int>> coords;
 
     for (int i = 1; i <= 8; i++) {
         auto cd = getPair(startCol, startRow, i);
 
-		if (checkCoord({startCol, startRow}, cd)) {
+		if (coordChecker({startCol, startRow}, cd)) {
 			coords.push_back(std::make_pair<Coord, int>(std::move(cd), std::move(iteration + board->getCell(cd.col, cd.row)->getStepCount())));
 			if (board->getCell(cd.col, cd.row)->getIsTeleport()) {
 				auto teleports = board->getTeleports();

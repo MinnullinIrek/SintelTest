@@ -24,7 +24,7 @@ class Mover
     std::unordered_map<Coord, int, std::function<int(Coord)>, std::function<int(Coord cd1, Coord cd2)>> mp;
 
 private:
-	std::list<std::pair<Coord, int>> getPossibleMoves(int startCol, int startRow, int iteration);
+	std::list<std::pair<Coord, int>> getPossibleMoves(int startCol, int startRow, int iteration, std::function<bool(const Coord&, const Coord&)> coordChecker);
     Coord getPair(int c, int r, int count);
     bool checkCoord(const Coord& cd1, const Coord& cd);
 
@@ -40,6 +40,9 @@ public:
     Mover(std::shared_ptr<Board> board, std::shared_ptr<Knight> knight,int col,int row);
 
     int moveTo(int col, int row);
+
+	int findLongestWay(int col, int row);
+
 
 };
 
