@@ -12,10 +12,11 @@ using namespace std;
 
 int main()
 {
+	//cout << "Hello World!" << endl;
 	try
 	{
 		shared_ptr<Board> board = make_shared<Board>(32);
-		board->randomMap();
+		//board->randomMap();
 		board->initMap(
 			"........B...LLL.................\n"
 			"........B...LLL.................\n"
@@ -54,10 +55,9 @@ int main()
 		//Knight *knight = new Knight(board, 0, 0);
 		shared_ptr<Visualizer> visualizer = make_shared<Visualizer>(board);
 		knight->addWatcher([visualizer]() {visualizer->operator()(); });
-		visualizer->printBoard(board);
+		visualizer->printBoard(board); 
 
 		knight->moveTo(15, 3);
-		//knight->findLongestWay(2, 1);
 
 	}
 	catch (exception &ex)

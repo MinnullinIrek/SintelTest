@@ -1,9 +1,6 @@
 #ifndef VISUALCHAR_H
 #define VISUALCHAR_H
 
-#include <list>
-#include <memory>
-
 enum class Color {
     Black = 0,
     Blue = 1,
@@ -43,45 +40,5 @@ struct Coord
     }
 };
 
-class TreeCoord
-{
-public:
-	int index = 0;
-
-	TreeCoord(const Coord &coord, int iter);
-	~TreeCoord();
-	
-	Coord cd = {0,0};
-	int iteration = 0;
-
-	TreeCoord * up = nullptr;
-	std::list<TreeCoord *> elements;
-	
-	bool operator == (TreeCoord & tree)
-	{
-		return cd.col == tree.cd.col && cd.row == tree.cd.row;
-	}
-};
-
-
-class TreeWay
-{
-public:
-	TreeWay(TreeCoord& startTree);
-	~TreeWay();
-
-	bool push_back(TreeCoord *leaf, TreeCoord * newLeaf);
-
-
-	TreeCoord tree;
-
-	std::list<TreeCoord*> leafs;
-
-
-
-private:
-
-};
-
-
 #endif // VISUALCHAR_H
+ 

@@ -24,7 +24,7 @@ void Visualizer::printBoard(std::shared_ptr<Board> board)
             printCell(board->getCell(col, row), col, row);
         }
     }
-	changeBuffer();
+	changeBuffer(); 
 }
 
 void Visualizer::operator()()

@@ -11,7 +11,7 @@ class Board;
 
 class Knight
 {
-	friend Mover;
+	friend Mover; 
     std::unique_ptr<Mover> mover;
 	std::list<std::function<void()>> watchers;
 
@@ -21,8 +21,6 @@ public:
     Knight();
 
     int moveTo(int col, int row);
-
-	int findLongestWay(int col, int row);
 
 	void setMover(std::unique_ptr<Mover> newMover);
 

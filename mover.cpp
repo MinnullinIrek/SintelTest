@@ -1,6 +1,7 @@
 #include <list>
 
 #include "mover.h"
+
 #include "board.h"
 #include "knight.h"
 #include "cell.h"
@@ -17,30 +18,11 @@ Mover:: Mover(std::shared_ptr<Board> board, std::shared_ptr<Knight> knight, int 
 {
 	curCell->setKnight(knight);
 	curCell->setChar('S');
-
-	checkers.push_back(  [this](const Coord& cd1, const Coord& cd)
-	{
-		return cd.col > 0 &&
-			cd.row > 0 &&
-			cd.col < this->board->size &&
-			cd.row < this->board->size;
-	} );
-
-	checkers.push_back([this](const Coord&, const Coord& cd) {return mp[cd] == 0;});
-	checkers.push_back([this](const Coord&, const Coord& cd) {return this->board->getCell(cd.col, cd.row)->getStepCount() >= 0;});
-	checkers.push_back([this](const Coord& cd1, const Coord& cd)
-	{
-		auto cells = get—ellsBetweenCoords(cd1, cd);
-		for (auto cell : cells)
-			if (cell->getStepCount() == -2)
-				return false;
-		return true;
-	});
-
 }
 
 int Mover::moveTo(int col, int row)
 {
+	board->getCell(col, row)->setChar('E');
 	int iteration = 0;
 	mp[{startCol, startRow}] = iteration;
 
@@ -51,17 +33,7 @@ int Mover::moveTo(int col, int row)
 		iteration++;
 		for (auto pos : positions) {
 			if(pos.second == iteration) {
-
-				auto checker = [this](const Coord& cdStart, const Coord& cdEnd)
-				{
-					for (auto & checkFunc : this->checkers) {
-						if (!checkFunc(cdStart, cdEnd))
-							return false;
-					}
-					return true;
-				};
-
-				auto lst = getPossibleMoves(pos.first.col, pos.first.row, iteration, checker);
+				auto lst = getPossibleMoves(pos.first.col, pos.first.row, iteration);
 
 				for (auto cd : lst) {
 					mp[cd.first] = iteration;
@@ -72,7 +44,7 @@ int Mover::moveTo(int col, int row)
 				}
 				nextPositions.insert(nextPositions.end(), lst.begin(), lst.end());
 			}
-			else {
+			else { 
 				nextPositions.push_back(pos);
 			}
 		}
@@ -82,66 +54,6 @@ int Mover::moveTo(int col, int row)
 
 	brek:
 	return iteration;
-}
-
-int Mover::findLongestWay(int col, int row)
-{
-	TreeCoord tcd({col, row}, 0);
-	bool delFirst = false;
-
-	TreeWay ways(tcd);
-	int i = 0;
-
-	for (auto way : ways.leafs) {
-		
-		if (delFirst) {
-			ways.leafs.pop_front();
-		}
-		if (i >= ways.leafs.size())
-			break;
-		int iteration = way->iteration;
-
-		auto &coord = way->cd;
-		{
-			{
-				auto lst = getPossibleMoves(coord.col, coord.row, iteration, [this](const Coord &cd1, const Coord &cd)
-				{
-					if (cd.col > 0 &&
-						cd.row > 0 &&
-						cd.col < board->size &&
-						cd.row < board->size &&
-						board->getCell(cd.col, cd.row)->getStepCount() >= 0)
-					{
-						auto cells = get—ellsBetweenCoords(cd1, cd);
-						for (auto cell : cells)
-							if (cell->getStepCount() == -2)
-								return false;
-						return true;
-					}
-					return false;
-				}
-				);
-
-				if (!lst.empty()) {
-					
-					for (auto cd : lst) {
-						delFirst = ways.push_back(way, new TreeCoord(cd.first, iteration + cd.second));
-						if(!delFirst){
-							i++;
-						}
-					}
-				}
-				
-			}
-		}
-	}
-	
-	
-
-	//moveByWay(lWay);
-
-
-	return 0;
 }
 
 Coord Mover::getPair(int c, int r, int count)
@@ -226,7 +138,6 @@ std::list<Coord> Mover::getBackWay(Coord &&cd)
 		bool didFind = false;
 		for (auto i = 1; i <= 8; i++) {
 			auto coord = getPair(cord.col, cord.row, i);
-			int newIter = mp[coord];
 			if (coord.col >= 0 && coord.row >= 0 && mp[coord] == iteration) {
 				backWay.push_front(coord);
 				cd = coord;
@@ -289,6 +200,7 @@ bool Mover::checkMoves(const std::list<Coord>& coords)
 
 			if (!((deltaRow == 2 && deltaCol == 1) || (deltaRow == 1 && deltaCol == 2))) {
 
+				//auto cellLast = board->getCell(cdLast.col, cdLast.row);
 				auto cell = board->getCell(cd.col, cd.row);
 				
 				if (! cell->getIsTeleport()) {
@@ -331,14 +243,14 @@ std::list<std::shared_ptr<Cell>> Mover::get—ellsBetweenCoords(const Coord & cd1,
 	return cells;
 }
 
-std::list<std::pair<Coord, int>> Mover::getPossibleMoves(int startCol, int startRow, int iteration, std::function<bool(const Coord&, const Coord&)> coordChecker)
+std::list<std::pair<Coord, int>> Mover::getPossibleMoves(int startCol, int startRow, int iteration)
 {
     std::list<std::pair<Coord, int>> coords;
 
     for (int i = 1; i <= 8; i++) {
         auto cd = getPair(startCol, startRow, i);
 
-		if (coordChecker({startCol, startRow}, cd)) {
+		if (checkCoord({startCol, startRow}, cd)) {
 			coords.push_back(std::make_pair<Coord, int>(std::move(cd), std::move(iteration + board->getCell(cd.col, cd.row)->getStepCount())));
 			if (board->getCell(cd.col, cd.row)->getIsTeleport()) {
 				auto teleports = board->getTeleports();
@@ -347,6 +259,8 @@ std::list<std::pair<Coord, int>> Mover::getPossibleMoves(int startCol, int start
 				}
 			}
 		}
+
+
     }
 
     return coords;

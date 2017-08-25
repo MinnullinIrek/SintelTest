@@ -15,17 +15,12 @@ void Knight::informChanges()
 
 Knight::Knight()
 {
-}
+} 
 
 int Knight::moveTo(int col, int row)
 {
     return mover->moveTo(col, row);
 
-}
-
-int Knight::findLongestWay(int col, int row)
-{
-	return mover->findLongestWay(col, row);
 }
 
 void Knight::setMover(std::unique_ptr<Mover> newMover)

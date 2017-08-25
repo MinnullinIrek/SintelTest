@@ -26,14 +26,13 @@ class Visualizer
     void clearRect(const Region &r, wchar_t empty);
 	std::shared_ptr<Board> board;
 
-	void Visualizer::changeBuffer();
+	void Visualizer::changeBuffer(); 
 	void Visualizer::setActiveBuffer(HANDLE h);
 
 public:
     Visualizer(std::shared_ptr<Board> board);
     void printBoard(std::shared_ptr<Board> board);
 	void operator()();
-	
 	
 
 };
