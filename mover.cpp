@@ -248,7 +248,7 @@ std::list<std::pair<Coord, int>> Mover::getPossibleMoves(int startCol, int start
     std::list<std::pair<Coord, int>> coords;
 
     for (int i = 1; i <= 8; i++) {
-        auto cd = getPair(startCol, startRow, i);
+        auto cd = getPair(startCol, startRow, i); 
 
 		if (checkCoord({startCol, startRow}, cd)) {
 			coords.push_back(std::make_pair<Coord, int>(std::move(cd), std::move(iteration + board->getCell(cd.col, cd.row)->getStepCount())));

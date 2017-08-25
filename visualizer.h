@@ -24,7 +24,7 @@ class Visualizer
     void printCell(std::shared_ptr<Cell> cell, int col, int row);
     void SetColor(Color text, Color background);
     void clearRect(const Region &r, wchar_t empty);
-	std::shared_ptr<Board> board;
+	std::shared_ptr<Board> board; 
 
 	void Visualizer::changeBuffer(); 
 	void Visualizer::setActiveBuffer(HANDLE h);

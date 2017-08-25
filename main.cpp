@@ -56,7 +56,7 @@ int main()
 		shared_ptr<Visualizer> visualizer = make_shared<Visualizer>(board);
 		knight->addWatcher([visualizer]() {visualizer->operator()(); });
 		visualizer->printBoard(board); 
-
+		 
 		knight->moveTo(15, 3);
 
 	}

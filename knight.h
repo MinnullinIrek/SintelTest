@@ -8,7 +8,7 @@
 class Mover;
 class Board;
 
-
+ 
 class Knight
 {
 	friend Mover; 

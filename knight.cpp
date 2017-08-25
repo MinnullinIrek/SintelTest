@@ -18,7 +18,7 @@ Knight::Knight()
 } 
 
 int Knight::moveTo(int col, int row)
-{
+{ 
     return mover->moveTo(col, row);
 
 }

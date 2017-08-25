@@ -41,6 +41,6 @@ public:
 
     int moveTo(int col, int row);
 	 
-};
+}; 
 
 #endif // MOVER_H

@@ -25,7 +25,7 @@ void Visualizer::printBoard(std::shared_ptr<Board> board)
         }
     }
 	changeBuffer(); 
-}
+} 
 
 void Visualizer::operator()()
 {

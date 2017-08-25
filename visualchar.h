@@ -39,6 +39,6 @@ struct Coord
         return col == cd2.col &&  row == cd2.row;
     }
 };
-
+ 
 #endif // VISUALCHAR_H
  
