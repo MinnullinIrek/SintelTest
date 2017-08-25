@@ -34,6 +34,7 @@ public:
     void printBoard(std::shared_ptr<Board> board);
 	void operator()();
 	
+	
 
 };
 

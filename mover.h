@@ -13,6 +13,7 @@ class Cell;
 class Board;
 class Knight;
 
+using Checker = std::function<bool(const Coord&, const Coord&)>;
 
 class Mover
 {
@@ -22,6 +23,7 @@ class Mover
     std::shared_ptr<Board> board;
     std::shared_ptr<Cell> curCell;
     std::unordered_map<Coord, int, std::function<int(Coord)>, std::function<int(Coord cd1, Coord cd2)>> mp;
+	std::list<Checker> checkers;
 
 private:
 	std::list<std::pair<Coord, int>> getPossibleMoves(int startCol, int startRow, int iteration, std::function<bool(const Coord&, const Coord&)> coordChecker);
