@@ -14,7 +14,6 @@ Visualizer::Visualizer(std::shared_ptr<Board> board):board(board)
 	handle = handles.begin();
 	setActiveBuffer(*handle);
 	handle++;
-    //handle = GetStdHandle(STD_OUTPUT_HANDLE);
 }
 
 void Visualizer::printBoard(std::shared_ptr<Board> board)
@@ -38,16 +37,11 @@ void Visualizer::operator()()
 void Visualizer::printCell(std::shared_ptr<Cell> cell, int col, int row)
 {
     wchar_t ch = cell->getChar();
-	if (ch == 'K')
-		SetColor(Color::Yellow, Color::Black);
     WriteConsoleOutputCharacter(*handle, &ch, 1, COORD{(short)col, (short)row}, logD);
-	SetColor(Color::White, Color::Black);
+	
 }
 
-void Visualizer::SetColor( Color text, Color background)
-{
-    SetConsoleTextAttribute(*handle, (static_cast<WORD>(background) << 4) | static_cast<WORD>(text));
-}
+
 void Visualizer::clearRect(const Region &r, wchar_t empty)
 {
     std::wstring ws(r.col2 - r.col1 + 1, empty);

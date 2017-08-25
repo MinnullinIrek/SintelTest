@@ -12,11 +12,9 @@ using namespace std;
 
 int main()
 {
-	//cout << "Hello World!" << endl;
 	try
 	{
 		shared_ptr<Board> board = make_shared<Board>(32);
-		//board->randomMap();
 		board->initMap(
 			"........B...LLL.................\n"
 			"........B...LLL.................\n"
@@ -26,7 +24,7 @@ int main()
 			"........B...LLLLLL..............\n"
 			"........B............RR.........\n"
 			"........BB...........RR.........\n"
-			"......T.WBB.....................\n"
+			"........WBB.....................\n"
 			"...RR...WWBBBBBBBBBB............\n"
 			"...RR...WW.........B............\n"
 			"........WW.........B......T.....\n"
@@ -42,7 +40,7 @@ int main()
 			"...........BBB..........BB......\n"
 			".....RR....B.............B......\n"
 			".....RR....B.............B.T....\n"
-			"...........B.....RR......B......\n"
+			".......T...B.....RR......B......\n"
 			"...........B.....RR.............\n"
 			"...........B..........RR........\n"
 			"...........B..........RR........\n"
@@ -52,7 +50,6 @@ int main()
 		knight->setMover(make_unique<Mover>(board, knight, 0, 0));
 
 
-		//Knight *knight = new Knight(board, 0, 0);
 		shared_ptr<Visualizer> visualizer = make_shared<Visualizer>(board);
 		knight->addWatcher([visualizer]() {visualizer->operator()(); });
 		visualizer->printBoard(board); 

@@ -12,7 +12,7 @@
 class Cell;
 class Board;
 class Knight;
-
+using Checker = std::function<bool(const Coord&, const Coord&)>;
 
 class Mover
 {
@@ -21,20 +21,23 @@ class Mover
     std::shared_ptr<Knight> knight;
     std::shared_ptr<Board> board;
     std::shared_ptr<Cell> curCell;
-    std::unordered_map<Coord, int, std::function<int(Coord)>, std::function<int(Coord cd1, Coord cd2)>> mp;
-
+    std::unordered_map<Coord, std::pair<int, Coord>, std::function<int(Coord)>, std::function<int(Coord cd1, Coord cd2)>> mp;
+	std::list<Checker> checkers;
 private:
-	std::list<std::pair<Coord, int>> getPossibleMoves(int startCol, int startRow, int iteration);
-    Coord getPair(int c, int r, int count);
-    bool checkCoord(const Coord& cd1, const Coord& cd);
+	std::list<std::pair<Coord, int>> getPossibleMoves(int startCol, int startRow, int iteration, Checker checker);
 
-	std::list<Coord> getBackWay(Coord && cd);
+    Coord getHorseCoords(int c, int r, int count);
+
+	std::list<Coord> getBackWay(const Coord & cd);
 	bool moveByWay(std::list<Coord> coords);
 
 	bool checkMoves(const std::list<Coord>& coords);
 
 	void moveLikeKnight(Coord &&cd);
-	std::list<std::shared_ptr<Cell>> get—ellsBetweenCoords(const Coord & cd1, const Coord & cd2);
+	std::list<std::shared_ptr<Cell>> getCellsBetweenCoords(const Coord & cd1, const Coord & cd2);
+
+	void cycler(int stCol, int stRow, std::function<bool(Coord&)> cycle);
+
 
 public:
     Mover(std::shared_ptr<Board> board, std::shared_ptr<Knight> knight,int col,int row);

@@ -15,14 +15,12 @@ struct Region
 };
 using namespace std;
 
-//WriteConsoleOutputCharacter(h, str.c_str() + current, min(len - current, delta), COORD{ r.col1, irow }, logD);
 class Visualizer
 {
 	std::array<HANDLE, 2> handles;
 	std::array<HANDLE, 2> ::iterator handle;
 
     void printCell(std::shared_ptr<Cell> cell, int col, int row);
-    void SetColor(Color text, Color background);
     void clearRect(const Region &r, wchar_t empty);
 	std::shared_ptr<Board> board; 
 

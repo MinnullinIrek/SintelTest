@@ -29,7 +29,7 @@ std::list<Coord> Board::getTeleports()
 
 void Board::initMap(std::string strMap)
 {
-    int col =0;
+    int col = 0;
     int row = 0;
 
     for (auto ch : strMap) {
@@ -66,11 +66,8 @@ void Board::initMap(std::string strMap)
 		   default:
 			   throw std::runtime_error((std::string("unexcepted char ") + ch).c_str());
 		   }
-
-           //map[Coord{col, row}] = std::make_shared<Cell>(ch);
            col ++;
         }
-
     }
 }
 
@@ -117,11 +114,7 @@ void Board::randomMap()
 			cell.second->setIsTeleport(true);
 			teleports.push_back({ size - (int)(count / size) - 1, count / size });
 		}
-
 	}
-
-
-
 }
 
 
